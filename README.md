@@ -15,27 +15,22 @@ dsh web 插件：让模型理解图片内容 —— 使用 [bigmodel.cn](https:/
 ## 安装
 
 ```bash
-cd ~/.dsh/profiles/web
-pnpm add dsh-plugin-read-image-free
+dsh plugin --profile web add dsh-plugin-read-image-free
 ```
 
-`cordis.patch.yml` 追加：
+自动挂为 bundle 层并插入插件行，重启 dsh web 生效。可选在 `~/.dsh/profiles/web/cordis.patch.yml` 按 id 覆盖配置：
 
 ```yaml
-- insert:
-    - id: read-image-free
-      name: 'dsh-plugin-read-image-free'
-      config:
-        # apiKey: '你的智谱KEY'   # 可选；不填则读环境变量 / config.json
+- id: read-image-free
+  config:
+    apiKey: '你的智谱KEY'   # 可选；不填则读环境变量 / config.json
 ```
-
-> 升级插件：`pnpm update dsh-plugin-read-image-free` 后重启 dsh web 生效。
-> 本地开发调试时，也可用 `file:/Users/xcodebuild/code/dsh-plugin-read-image-free` 或文件 URL + `?v=` 递增方式安装，可热加载无需重启。
 
 ## 卸载
 
 ```bash
-cd ~/.dsh/profiles/web
-pnpm remove dsh-plugin-read-image-free
-# 从 cordis.patch.yml 删除对应 insert 行
+dsh plugin --profile web remove dsh-plugin-read-image-free
 ```
+
+重启 dsh web 生效。
+

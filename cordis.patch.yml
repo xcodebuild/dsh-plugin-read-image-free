@@ -1,0 +1,10 @@
+# dsh-plugin-read-image-free bundle patch：随包发布，通过
+# 'dsh plugin --profile web add dsh-plugin-read-image-free' 安装后自动作为
+# profile 的一个 bundle 层应用，插入 read-image-free 插件行（无需手动改
+# ~/.dsh/profiles/web/cordis.patch.yml）。
+#
+# 该行不带 config（apiKey 属用户配置，不该打进包层）：按 id 在用户自己的
+# cordis.patch.yml 中整行覆盖 config 即可（见 README「配置」）。
+- insert:
+    - id: read-image-free
+      name: 'dsh-plugin-read-image-free'
