@@ -1,0 +1,23 @@
+{
+  "name": "dsh-plugin-read-image-free",
+  "version": "0.2.0",
+  "description": "dsh web 插件：不因模型不支持图片而拒绝附件（图片保存到本地后把带扩展名的绝对路径以文本传给模型）；并内化 image-read-free 技能逻辑，注册 read_image_free 工具（调用智谱 GLM-4.1V-Thinking-Flash 做 OCR/图像理解），模型无需该技能即可直接处理图片",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib/index.js",
+    "README.md"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/dsh-attachment": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-home-paths": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
+    "@deepseek-ai/schemastery": "^3.18.1"
+  }
+}
