@@ -116,7 +116,8 @@ try {
   check('sessionId preserved', seen.payload.sessionId === 'session-1');
   check('no image parts reach original handler', !seen.payload.content.some((p) => p.type === 'image'));
   const pathText = seen.payload.content[1]?.text;
-  check('path text reaches original handler', typeof pathText === 'string' && pathText.startsWith('/') && pathText.includes(root) && pathText.endsWith('.png'));
+  check('path text reaches original handler', typeof pathText === 'string' && pathText.trim().startsWith('/') && pathText.includes(root) && pathText.endsWith('.png'));
+  check('path separated from preceding text by a space', typeof pathText === 'string' && pathText.startsWith(' '), String(pathText));
 
   // 2. 纯文本消息不做任何改动（同一引用）
   const plain = { rpcId: 'rpc-2', payload: { sessionId: 'session-1', mode: 'queue', content: [{ type: 'text', text: 'hi' }] } };

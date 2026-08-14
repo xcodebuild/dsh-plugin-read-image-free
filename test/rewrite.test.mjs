@@ -58,10 +58,11 @@ try {
     const out = await rewritePromptContent({}, attachments, content);
     check('no image blocks remain', out.every((p) => p.type === 'text'));
     const textBlock = out[1];
-    const path = textBlock.text;
+    const path = textBlock.text.trim();
+    check('path block keeps a leading separator space', textBlock.text.startsWith(' '), String(textBlock.text));
     check('text block is exactly the absolute path', typeof path === 'string' && path.startsWith('/'), String(path));
     check('path has the .png extension', path.endsWith('.png'), String(path));
-    check('path does not carry extra prose', !path.includes('用户上传') && !path.includes('read'), String(path));
+    check('path does not carry extra prose', !path.includes('用户上传') && !path.includes(' '), String(path));
     if (path) {
       const exists = await import('node:fs/promises').then((fs) => fs.stat(path).then(() => true, () => false));
       check('file exists at the referenced path (with extension)', exists, String(path));
@@ -70,6 +71,26 @@ try {
     const ref = { attachmentId: 'sha256:' + 'a'.repeat(64), mediaType: 'image/png' };
     check('stored path layout matches objects/<2>/<sha>',
       resolveStoredImagePath(root, ref) === join(root, 'objects', 'aa', 'a'.repeat(64)));
+  }
+
+  // 2b. 多图：连续图片的路径合并进同一个 text 块、空格分隔，不黏连
+  {
+    const content = [
+      { type: 'text', text: '看这两张图' },
+      { type: 'image', mediaType: 'image/png', data: PNG_1x1.toString('base64'), name: 'a.png' },
+      { type: 'image', mediaType: 'image/png', data: PNG_1x1.toString('base64'), name: 'b.png' },
+    ];
+    const out = await rewritePromptContent({}, attachments, content);
+    check('two images collapse into one text block', out.length === 2 && out[1].type === 'text', JSON.stringify(out.map((p) => p.type)));
+    const text = out[1].text;
+    const paths = text.trim().split(/\s+/);
+    check('two paths joined with exactly one space',
+      paths.length === 2 && paths[0].endsWith('.png') && paths[1].endsWith('.png'), String(text));
+    check('paths are space-separated, not glued', text.includes(' ') && !text.includes('.png.png'), String(text));
+    for (const p of paths) {
+      const exists = await import('node:fs/promises').then((fs) => fs.stat(p).then(() => true, () => false));
+      check(`file exists at ${p}`, exists, String(p));
+    }
   }
 
   // 3. 数量上限仍生效
